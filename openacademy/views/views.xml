@@ -1,5 +1,4 @@
 <odoo>
-  <!--
     <record model="ir.ui.view" id="course_form_view">
       <field name="name">course.form</field>
       <field name="model">openacademy.course</field>
@@ -43,13 +42,14 @@
         </search>
       </field>
     </record>
-    -->
+
     <record model="ir.actions.act_window" id="course_list_action">
       <field name="name">Courses</field>
       <field name="res_model">openacademy.course</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
+
     <menuitem name="Open Academy" id="main_openacademy_menu"/>
     <menuitem name="Open Academy" id="openacademy_menu" parent="main_openacademy_menu"/>
     <menuitem name="Courses" id="courses_menu" parent="openacademy_menu" action="course_list_action"/>
