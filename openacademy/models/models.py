@@ -35,6 +35,25 @@ class Session(models.Model):
 	
 	@api.depends('seats','attendee_ids')
 	def _taken_seats(self):
-#		import pdb; pdb.set_trace()
 		for record in self.filtered('seats'):
 			record.taken_seats=100.0*len(record.attendee_ids)/record.seats
+	
+	@api.onchange('seats','attendee_ids')
+	def _verify_valid_seats(self):
+		if self.filtered(lambda r: r.seats < 0):
+			self.active = False
+			return{
+				'warning':{
+					'title': "Incorrect 'seats' value",
+					'message': "The number of available seats may not be negative",
+					}
+				}
+		if self.seats < len(self.attendee_ids):
+			self.active = False
+			return{
+				'warning':{
+					'title': "Too many attendees",
+					'message': "Increase seats or remove excess attendees",
+					}
+				}
+		self.active = True
