@@ -83,10 +83,7 @@
     <menuitem name="Open Academy" id="openacademy_menu" parent="main_openacademy_menu"/>
     <menuitem name="Courses" id="courses_menu" parent="openacademy_menu" action="course_list_action"/>
     
-  <!--
-      Modelo con vista de formilario para Sessions
-  -->
-    
+  <!-- Modelo con vista de formilario para Sessions -->
     <record model="ir.ui.view" id="session_form_view">
       <field name="name">session.form</field>
       <field name="model">openacademy.session</field>
@@ -96,8 +93,8 @@
             <group>
               <field name="name"/>
               <field name="start_date"/>
-              <field name="datetime_test"/>
               <field name="duration"/>
+              <field name="end_date"/>
               <field name="seats"/>
               <field name="taken_seats" widget="progressbar"/>
               <field name="instructor_id"/>
@@ -105,30 +102,38 @@
               <label for="attendee_ids"/>
               <field name="attendee_ids" nolabel="1"/>
               <field name="active"/>
+              <field name="datetime_test"/>
             </group>
           </sheet>
         </form>
       </field>
     </record>
-    
-  <!--
-      Modelo con vista de Arbol para Sessions
-  -->
-    
+  <!-- Modelo con vista de Arbol para Sessions -->
     <record model="ir.ui.view" id="session_tree_view">
       <field name="name">session.tree</field>
       <field name="model">openacademy.session</field>
       <field name="arch" type="xml">
-        <tree string="Session Tree">
+        <tree string="Session Tree" decoration-info="duration &lt;5" decoration-danger="duration &gt; 15">
           <field name="name"/>
           <field name="start_date"/>
           <field name="datetime_test"/>
           <field name="duration"/>
+          <field name="end_date"/>
           <field name="seats"/>
           <field name="instructor_id"/>
           <field name="course_id"/>
           <field name="taken_seats" widget="progressbar"/>
         </tree>
+      </field>
+    </record>
+    
+    <record model= "ir.ui.view" id="session_calendar_view">
+      <field name="name">session.calendar</field>
+      <field name="model">openacademy.session</field>
+      <field name="arch" type="xml">
+        <calendar string="Session Calendar" date_start="start_date" date_stop="end_date" color="instructor_id">
+          <field name="name"/>
+        </calendar>
       </field>
     </record>
     
@@ -140,7 +145,7 @@
       <field name="name">Sessions</field>
       <field name="res_model">openacademy.session</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,calendar</field>
     </record>
     
   <!--

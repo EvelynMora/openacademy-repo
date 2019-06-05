@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, exceptions
 #from psycopg2 import IntegrityError
-import time
+from datetime import timedelta
 
 def get_uid(self, *a):
 	return self.env.uid
@@ -15,7 +15,7 @@ class Course(models.Model):
 	responsible_id = fields.Many2one(
 		'res.users', string="Responsible", 
 		index=True, ondelete='set null', 
-#		default=lambda self, *a: self.env.uid)
+#		default=lambda self, *a: self.env.uid,
 		default=get_uid)
 	session_ids = fields.One2many('openacademy.session', 'course_id')
 	
@@ -60,7 +60,21 @@ class Session(models.Model):
 	attendee_ids = fields.Many2many('res.partner', string="Attendees")
 	taken_seats = fields.Float(compute='_taken_seats')
 	active = fields.Boolean(default=True)
+	end_date = fields.Date(store=True, compute='_get_end_date',
+							inverse='_set_end_date')
 	
+	@api.depends('start_date', 'duration')
+	def _get_end_date(self):
+		for record in self.filtered('start_date'):
+#			start_date = fields.Datetime.from_string(record.start_date)
+			record.end_date = record.start_date + timedelta(days=record.duration, seconds=-1)
+
+	def _set_end_date(self):
+		for record in self.filtered('start_date'):
+			start_date = fields.Datetime.from_string(record.start_date)
+			end_date = fields.Datetime.from_string(record.end_date)
+			record.duration = (end_date - start_date).days + 1
+			
 	@api.depends('seats','attendee_ids')
 	def _taken_seats(self):
 		for record in self.filtered('seats'):
